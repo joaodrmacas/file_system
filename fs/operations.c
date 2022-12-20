@@ -111,6 +111,11 @@ static int tfs_lookup(char const *name, inode_t const *root_inode) {
         return -1;
     }
 
+    if (root_inode->i_node_type != T_DIRECTORY){
+        fprintf(stderr,"tfs_lookup error: root inode isn't a directory\n");
+        return -1;
+    }
+
     // skip the initial '/' character
     name++;
 
@@ -364,7 +369,7 @@ int tfs_sym_link(char const *target, char const *link_name) {
     symlinkINode = inode_get(symlinkINumber);
 
     pthread_rwlock_wrlock(&inode_rwl_table[symlinkINumber]);
-    strncpy(symlinkINode->i_symlink_name, target, MAX_FILE_NAME);
+    strcpy(symlinkINode->i_symlink_name, target);
     pthread_rwlock_unlock(&inode_rwl_table[symlinkINumber]);
 
     return 0;
