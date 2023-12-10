@@ -9,11 +9,6 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-extern pthread_mutex_t free_open_file_mutex;
-extern pthread_rwlock_t free_block_rwl;
-extern pthread_rwlock_t freeinode_rwl;
-extern pthread_rwlock_t *inode_rwl_table;
-
 /**
  * Directory entry
  */
@@ -22,28 +17,22 @@ typedef struct {
     int d_inumber;
 } dir_entry_t;
 
-typedef enum { T_FILE, T_DIRECTORY, T_SYMLINK } inode_type; 
+typedef enum { T_FILE, T_DIRECTORY } inode_type;
 
 /**
  * Inode
  */
-typedef struct{
-    int i_data_block;
-    size_t i_size;
-    int i_links_count;
-}data_t;
-
 typedef struct {
-    inode_type i_node_type; //tag
-    union {
-        char i_symlink_name[MAX_FILE_NAME];
-        data_t i_data;
-    };
+    inode_type i_node_type;
+
+    size_t i_size;
+    int i_data_block;
+
     // in a more complete FS, more fields could exist here
 } inode_t;
 
-
 typedef enum { FREE = 0, TAKEN = 1 } allocation_state_t;
+
 
 /**
  * Open file entry (in open file table)
@@ -51,7 +40,6 @@ typedef enum { FREE = 0, TAKEN = 1 } allocation_state_t;
 typedef struct {
     int of_inumber;
     size_t of_offset;
-    pthread_mutex_t mutex;
 } open_file_entry_t;
 
 int state_init(tfs_params);
@@ -74,6 +62,5 @@ void *data_block_get(int block_number);
 int add_to_open_file_table(int inumber, size_t offset);
 void remove_from_open_file_table(int fhandle);
 open_file_entry_t *get_open_file_entry(int fhandle);
-bool get_open_file_entry_from_inumber(int iNumber);
 
 #endif // STATE_H

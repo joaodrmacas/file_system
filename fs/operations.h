@@ -1,4 +1,3 @@
-
 #ifndef OPERATIONS_H
 #define OPERATIONS_H
 
@@ -12,8 +11,10 @@ typedef struct {
     size_t max_inode_count;
     size_t max_block_count;
     size_t max_open_files_count;
+
     size_t block_size;
 } tfs_params;
+
 /**
  * Return a sane default set of parameters for tecnicofs.
  */
@@ -135,6 +136,5 @@ int tfs_unlink(char const *target);
  * Returns 0 if successful, -1 otherwise.
  */
 int tfs_copy_from_external_fs(char const *source_path, char const *dest_path);
-
 
 #endif // OPERATIONS_H
